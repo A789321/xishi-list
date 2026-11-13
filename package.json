@@ -1,0 +1,13 @@
+{
+  "name": "xishi-list",
+  "version": "1.0.0",
+  "description": "囍事清单 · 订婚结婚物资共选：粘贴好物链接，家人一起点囍投票，一键跳转淘宝/京东/拼多多下单",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "license": "MIT"
+}
