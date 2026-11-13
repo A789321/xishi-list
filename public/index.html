@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="xi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>囍事清单 · 备婚工作台</title>
+<meta name="description" content="订婚结婚好物共选、备婚清单、今日计划、备婚流程、双方准备、备忘录，一站式备婚工作台。">
+<meta name="theme-color" content="#B3282D">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="bg-aura" aria-hidden="true"></div>
+<div class="bg-grain" aria-hidden="true"></div>
+
+<!-- ============ 登录 / 注册 ============ -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <span class="seal seal-lg" aria-hidden="true">囍</span>
+    <h1 class="login-title">囍事清单</h1>
+    <p class="login-sub">备婚工作台 · 好物共选 · 逐项确认不遗漏</p>
+    <form id="loginForm" class="login-form">
+      <input id="luUser" placeholder="用户名" maxlength="16" autocomplete="username" required>
+      <input id="luPass" type="password" placeholder="密码（至少6位）" maxlength="64" autocomplete="current-password" required>
+      <button class="btn btn-primary btn-block" id="luSubmit" type="submit">登录</button>
+    </form>
+    <button class="login-toggle" id="luToggle" type="button">没有账号？注册一个</button>
+    <p class="login-tip">每个账号的内容相互独立，互不可见；管理员可查看全部账号。</p>
+  </div>
+</div>
+
+<!-- ============ 应用主体 ============ -->
+<div id="app" hidden>
+<header class="topbar" id="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="seal" aria-hidden="true">囍</span>
+      <div class="brand-text">
+        <h1 id="listTitle">囍事清单</h1>
+        <p id="listSubtitle">订婚 · 结婚好物，家人一起挑</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <select id="asSelect" class="as-select desktop-only" aria-label="账号视角" hidden></select>
+      <div class="theme-wrap desktop-only">
+        <button class="icon-btn" id="btnTheme" title="切换风格" aria-label="切换风格" aria-haspopup="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-.8 2-1.8 0-1-.8-1.5-.8-2.4 0-1 .8-1.8 2-1.8H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8Z"/><circle cx="7.8" cy="10.6" r="1.1" fill="currentColor" stroke="none"/><circle cx="12" cy="7.6" r="1.1" fill="currentColor" stroke="none"/><circle cx="16.2" cy="10.6" r="1.1" fill="currentColor" stroke="none"/></svg>
+        </button>
+        <div class="theme-pop" id="themePop" hidden>
+          <p class="theme-pop-title">选一个喜欢的风格</p>
+          <button class="theme-opt" data-theme="xi"><i class="sw sw-xi"></i><span>朱砂囍韵<small>红金 · 新中式</small></span></button>
+          <button class="theme-opt" data-theme="tao"><i class="sw sw-tao"></i><span>桃夭粉黛<small>桃粉 · 温柔</small></span></button>
+          <button class="theme-opt" data-theme="dai"><i class="sw sw-dai"></i><span>青黛雅集<small>黛青 · 清雅</small></span></button>
+        </div>
+      </div>
+      <button class="icon-btn desktop-only" id="btnShare" title="分享与备份" aria-label="分享与备份">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="m8.4 10.8 7.2-4.2M8.4 13.2l7.2 4.2"/></svg>
+      </button>
+      <span class="user-chip desktop-only" id="userChip"></span>
+      <button class="icon-btn desktop-only" id="btnLogout" title="退出登录" aria-label="退出登录">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 8l-4 4 4 4M6 12h10"/></svg>
+      </button>
+      <button class="btn btn-primary btn-add" id="btnAdd">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="btn-add-text">添加好物</span>
+      </button>
+      <div class="more-wrap mobile-only">
+        <button class="icon-btn" id="btnMore" title="更多" aria-label="更多菜单" aria-haspopup="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><circle cx="5" cy="12" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="19" cy="12" r="1.9"/></svg>
+        </button>
+        <div class="more-pop" id="morePop" hidden>
+          <div class="more-user" id="moreUser"></div>
+          <div class="more-row" id="moreAsRow" hidden>
+            <span class="more-label">账号视角</span>
+            <select id="asSelectM" class="as-select" aria-label="账号视角"></select>
+          </div>
+          <div class="more-row">
+            <span class="more-label">风格</span>
+            <div class="m-themes">
+              <button class="m-theme" data-theme="xi" title="朱砂囍韵"><i class="sw sw-xi"></i></button>
+              <button class="m-theme" data-theme="tao" title="桃夭粉黛"><i class="sw sw-tao"></i></button>
+              <button class="m-theme" data-theme="dai" title="青黛雅集"><i class="sw sw-dai"></i></button>
+            </div>
+          </div>
+          <button class="more-row more-btn" id="btnShareM">分享与备份</button>
+          <button class="more-row more-btn danger" id="btnLogoutM">退出登录</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav class="mainnav" id="mainnav" aria-label="功能模块">
+  <div class="mainnav-inner">
+    <button data-mod="items" class="active">好物清单</button>
+    <button data-mod="checklist">备婚清单</button>
+    <button data-mod="tasks">今日计划</button>
+    <button data-mod="timeline">备婚流程</button>
+    <button data-mod="sides">双方准备</button>
+    <button data-mod="memo">备忘录</button>
+    <button data-mod="settings">设置</button>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- ===== 好物清单 ===== -->
+  <section class="module" id="mod-items">
+    <section class="hero">
+      <span class="hero-watermark" aria-hidden="true">囍</span>
+      <div class="hero-inner">
+        <p class="hero-kicker">订婚 · 结婚 · 物资共选</p>
+        <h2 class="hero-title">把看中的好物，<em>攒成一份囍事清单</em></h2>
+        <p class="hero-sub">粘贴淘宝 / 京东 / 拼多多链接 → 点「囍」投票 → 一键跳转下单 → 移入已购清单</p>
+        <button class="hero-edit" id="btnGoSettings">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19.5 8.5a2.1 2.1 0 0 0-3-3L5 17v3Z"/><path d="m13.5 6.5 3 3"/></svg>
+          婚期 / 地点 / 预算 / 清单名
+        </button>
+        <div class="stats">
+          <div class="stat"><b id="statA">0</b><span id="statALabel">件好物</span></div>
+          <div class="stat"><b id="statB">0</b><span id="statBLabel">个喜欢</span></div>
+          <div class="stat"><b id="statC">¥0</b><span id="statCLabel">预算参考</span></div>
+          <div class="stat"><b id="statD">0</b><span id="statDLabel">已下单</span></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="viewseg" id="itemViewSeg">
+      <button data-view="todo" class="active">待挑选<b id="todoCount">0</b></button>
+      <button data-view="bought">已购清单<b id="boughtCount">0</b></button>
+    </div>
+
+    <nav class="tabs" id="phaseTabs" aria-label="阶段筛选"></nav>
+
+    <div class="toolbar">
+      <label class="search">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-3.8-3.8"/></svg>
+        <input id="q" type="search" placeholder="搜索名称 / 备注 / 分类" autocomplete="off">
+      </label>
+      <div class="selects">
+        <select id="fOwner" aria-label="账号筛选" hidden></select>
+        <select id="fCategory" aria-label="分类筛选"></select>
+        <select id="fPlatform" aria-label="平台筛选">
+          <option value="all">全部平台</option>
+          <option>淘宝</option><option>天猫</option><option>京东</option>
+          <option>拼多多</option><option>抖音</option><option>其他</option>
+        </select>
+        <select id="fSort" aria-label="排序方式">
+          <option value="new">最新添加</option>
+          <option value="hot">最多喜欢</option>
+          <option value="priceAsc">价格从低到高</option>
+          <option value="priceDesc">价格从高到低</option>
+        </select>
+      </div>
+      <button class="chip-toggle" id="chipMine" aria-pressed="false">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20.5S3.5 15.4 3.5 9.3a4.6 4.6 0 0 1 8.5-2.5A4.6 4.6 0 0 1 20.5 9.3c0 6.1-8.5 11.2-8.5 11.2Z"/></svg>
+        只看我喜欢
+      </button>
+    </div>
+
+    <div class="bulkbar" id="bulkBar" hidden>
+      <span>已选 <b id="bulkCount">0</b> 件</span>
+      <div class="bulk-actions">
+        <button class="btn btn-ghost" id="bulkBuy">标记已下单</button>
+        <button class="btn btn-danger-ghost" id="bulkDel">删除</button>
+        <button class="btn btn-ghost" id="bulkCancel">取消选择</button>
+      </div>
+    </div>
+
+    <div class="load-error" id="loadError" hidden>
+      <p>加载失败，请检查网络后重试</p>
+      <button class="btn btn-primary" id="retryBtn">重新加载</button>
+    </div>
+
+    <main class="grid" id="grid" aria-live="polite"></main>
+  </section>
+
+  <!-- ===== 备婚清单 ===== -->
+  <section class="module" id="mod-checklist" hidden>
+    <div class="module-head">
+      <div><h2>备婚清单</h2><p>分类清单 · 逐项确认不遗漏</p></div>
+      <span class="progress-pill" id="ckProgress">0 / 0</span>
+    </div>
+    <div class="inline-add">
+      <input id="ckNewCat" maxlength="20" placeholder="新分类名称，如：婚房布置">
+      <button class="btn btn-ghost" id="ckAddCat">新增分类</button>
+    </div>
+    <div id="ckList" class="ck-list"></div>
+  </section>
+
+  <!-- ===== 今日计划 ===== -->
+  <section class="module" id="mod-tasks" hidden>
+    <div class="module-head">
+      <div><h2>今日计划</h2><p id="taskTodayLabel">今天要做的事</p></div>
+      <span class="progress-pill" id="taskProgress">0 / 0</span>
+    </div>
+    <div class="inline-add">
+      <input id="taskText" maxlength="80" placeholder="添加计划，如：给酒店打电话确认菜单">
+      <input id="taskDate" type="date" aria-label="计划日期">
+      <button class="btn btn-primary" id="taskAdd">添加</button>
+    </div>
+    <div class="chips" id="taskFilter">
+      <button data-tf="today" class="active">今天</button>
+      <button data-tf="all">全部</button>
+      <button data-tf="undone">未完成</button>
+    </div>
+    <div id="taskList" class="row-list"></div>
+  </section>
+
+  <!-- ===== 备婚流程 ===== -->
+  <section class="module" id="mod-timeline" hidden>
+    <div class="countdown" id="cdBanner"></div>
+    <div class="module-head">
+      <div><h2>备婚流程</h2><p>按时间推进，完成一项勾一项</p></div>
+      <button class="btn btn-primary" id="tlAddBtn">新增节点</button>
+    </div>
+    <div id="tlList" class="tl-list"></div>
+  </section>
+
+  <!-- ===== 双方准备 ===== -->
+  <section class="module" id="mod-sides" hidden>
+    <div class="module-head">
+      <div><h2>双方准备</h2><p>服饰 · 宾客名单 · 车队 · 彩礼嫁妆</p></div>
+    </div>
+    <div class="viewseg" id="sideSeg">
+      <button data-side="male" class="active">男方准备</button>
+      <button data-side="female">女方准备</button>
+    </div>
+    <div id="sideContent"></div>
+  </section>
+
+  <!-- ===== 备忘录 ===== -->
+  <section class="module" id="mod-memo" hidden>
+    <div class="module-head">
+      <div><h2>备忘录</h2><p>商家联系 · 宾客忌口 · 灵感收集 · 家庭沟通</p></div>
+      <span class="save-hint" id="memoHint">自动保存</span>
+    </div>
+    <div class="memo-block">
+      <div class="memo-block-head"><h3>商家联系方式</h3><button class="btn btn-ghost" id="ctAddBtn">添加商家</button></div>
+      <div id="ctList" class="ct-list"></div>
+    </div>
+    <div class="memo-block">
+      <div class="memo-block-head"><h3>宾客忌口</h3></div>
+      <textarea id="memoDiet" rows="3" maxlength="2000" placeholder="记录宾客的饮食禁忌和特殊需求，如：张叔不吃海鲜、李姨素食…"></textarea>
+    </div>
+    <div class="memo-block">
+      <div class="memo-block-head"><h3>婚礼灵感收集</h3></div>
+      <textarea id="memoInsp" rows="3" maxlength="2000" placeholder="婚礼主题色灵感、仪式流程创意、喜欢的布置风格…"></textarea>
+    </div>
+    <div class="memo-block">
+      <div class="memo-block-head"><h3>家庭沟通</h3></div>
+      <textarea id="memoFamily" rows="3" maxlength="2000" placeholder="两家商定的事项、分工、待确认的问题…"></textarea>
+    </div>
+  </section>
+
+  <!-- ===== 设置 ===== -->
+  <section class="module" id="mod-settings" hidden>
+    <div class="module-head">
+      <div><h2>设置</h2><p>婚期 · 地点 · 预算 · 配色 · 账号</p></div>
+    </div>
+
+    <div class="set-card">
+      <h3>清单信息</h3>
+      <form id="settingsForm" class="set-form">
+        <div class="field-row">
+          <label class="field"><span class="field-label">清单名</span><input id="sTitle" maxlength="30"></label>
+          <label class="field"><span class="field-label">副标题（新人 & 婚期）</span><input id="sSubtitle" maxlength="60"></label>
+        </div>
+        <div class="field-row">
+          <label class="field"><span class="field-label">婚礼日期</span><input id="sDate" type="date"></label>
+          <label class="field"><span class="field-label">婚礼地点</span><input id="sVenue" maxlength="60" placeholder="如：南昌 · 某某酒店"></label>
+        </div>
+        <div class="field-row">
+          <label class="field"><span class="field-label">总预算（元）</span><input id="sBudget" type="number" min="0" step="100" placeholder="如 158000"></label>
+          <label class="field"><span class="field-label">已花费（元）</span><input id="sSpent" type="number" min="0" step="100" placeholder="手动填写"></label>
+        </div>
+        <div class="budget-ref" id="spentRef"></div>
+        <div class="budget-bar" id="budgetBar" hidden><i></i></div>
+        <button class="btn btn-primary" type="submit">保存设置</button>
+      </form>
+    </div>
+
+    <div class="set-card">
+      <h3>自定义配色</h3>
+      <div class="theme-row">
+        <button class="theme-opt" data-theme="xi"><i class="sw sw-xi"></i><span>朱砂囍韵<small>红金 · 新中式</small></span></button>
+        <button class="theme-opt" data-theme="tao"><i class="sw sw-tao"></i><span>桃夭粉黛<small>桃粉 · 温柔</small></span></button>
+        <button class="theme-opt" data-theme="dai"><i class="sw sw-dai"></i><span>青黛雅集<small>黛青 · 清雅</small></span></button>
+      </div>
+    </div>
+
+    <div class="set-card">
+      <h3>修改密码</h3>
+      <form id="pwForm" class="set-form">
+        <div class="field-row">
+          <label class="field"><span class="field-label">原密码</span><input id="pwOld" type="password" maxlength="64" autocomplete="current-password"></label>
+          <label class="field"><span class="field-label">新密码（至少6位）</span><input id="pwNew" type="password" maxlength="64" autocomplete="new-password"></label>
+        </div>
+        <button class="btn btn-ghost" type="submit">修改密码</button>
+      </form>
+    </div>
+
+    <div class="set-card" id="accountsBox" hidden>
+      <h3>账号总览（管理员）</h3>
+      <div id="accountsList" class="accounts-list"></div>
+    </div>
+
+    <div class="set-card">
+      <h3>数据备份</h3>
+      <div class="backup-actions">
+        <a class="btn btn-ghost" id="btnExport2" href="#" download>导出备份（JSON）</a>
+        <button class="btn btn-ghost" id="btnImport2">导入备份</button>
+        <button class="btn btn-danger-ghost" id="btnClearSeed2">清空示例数据</button>
+        <button class="btn btn-danger-ghost" id="btnClearAll2">一键清空全部好物</button>
+      </div>
+      <p class="share-tip">免费托管重新部署时数据可能重置，建议重要节点导出备份；导入会覆盖当前账号的清单。</p>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span class="foot-seal" aria-hidden="true">囍</span>
+    <p>为你们的囍事用心挑选 · 账号内容相互独立，管理员可总览全局</p>
+  </footer>
+</div>
+
+<button class="fab" id="fabAdd" aria-label="添加好物">
+  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+</button>
+</div>
+
+<!-- 详情抽屉 -->
+<div class="drawer-wrap" id="drawerWrap" hidden>
+  <div class="drawer-backdrop" data-close-drawer></div>
+  <aside class="drawer" role="dialog" aria-modal="true" aria-label="好物详情">
+    <div class="drawer-body" id="drawerBody"></div>
+  </aside>
+</div>
+
+<!-- 添加 / 编辑好物 -->
+<div class="modal-wrap" id="modalAdd" hidden>
+  <div class="modal-backdrop" data-close-modal></div>
+  <div class="modal" role="dialog" aria-modal="true" aria-label="添加好物">
+    <div class="modal-head">
+      <h3 id="addModalTitle">添加好物</h3>
+      <button class="icon-btn" data-close-modal aria-label="关闭"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+    </div>
+    <form id="addForm" class="modal-form">
+      <label class="field">
+        <span class="field-label">商品链接 <i>*</i></span>
+        <input id="fUrl" type="text" inputmode="url" autocapitalize="off" spellcheck="false" placeholder="粘贴商品链接，或整段淘宝/京东/拼多多分享文本" required>
+        <span class="url-hint" id="urlHint">整段分享文本可直接粘贴，自动提取链接并识别平台</span>
+      </label>
+      <label class="field"><span class="field-label">好物名称</span><input id="fTitle" maxlength="80" placeholder="如：足金999古法龙凤手镯"></label>
+      <div class="field">
+        <span class="field-label">所属阶段</span>
+        <div class="seg">
+          <label><input type="radio" name="fPhase" value="订婚"><span>订婚</span></label>
+          <label><input type="radio" name="fPhase" value="结婚"><span>结婚</span></label>
+          <label><input type="radio" name="fPhase" value="通用" checked><span>通用</span></label>
+        </div>
+      </div>
+      <div class="field-row">
+        <label class="field"><span class="field-label">分类</span><input id="fCat" list="catList" maxlength="20" placeholder="选择或输入自定义分类"><datalist id="catList"></datalist></label>
+        <label class="field"><span class="field-label">价格（元，可选）</span><input id="fPrice" type="number" min="0" step="0.01" placeholder="0.00"></label>
+      </div>
+      <label class="field"><span class="field-label">备注（可选）</span><textarea id="fNote" rows="2" maxlength="300" placeholder="尺码、颜色、优惠、注意事项…"></textarea></label>
+      <label class="field"><span class="field-label">推荐人署名</span><input id="fBy" maxlength="20" placeholder="如：妈妈 / 表姐 / 新郎"></label>
+      <button class="btn btn-primary btn-block" id="addSubmit" type="submit">添加到清单</button>
+    </form>
+  </div>
+</div>
+
+<!-- 分享与备份 -->
+<div class="modal-wrap" id="modalShare" hidden>
+  <div class="modal-backdrop" data-close-modal></div>
+  <div class="modal" role="dialog" aria-modal="true" aria-label="分享与备份">
+    <div class="modal-head">
+      <h3>分享与备份</h3>
+      <button class="icon-btn" data-close-modal aria-label="关闭"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+    </div>
+    <p class="share-desc">把网址发给家人，各自注册账号后内容相互独立；管理员可查看全部账号。</p>
+    <div class="share-link-row">
+      <input id="shareLink" readonly>
+      <button class="btn btn-primary" id="btnCopyLink">复制链接</button>
+    </div>
+    <p class="share-tip">微信内若无法跳转购物 App，请点右上角「···」选择「在浏览器打开」。淘宝分享选「复制链接」，整段文字可直接粘贴。</p>
+    <p class="backup-title">数据备份</p>
+    <div class="backup-actions">
+      <a class="btn btn-ghost" id="btnExport" href="#" download>导出备份（JSON）</a>
+      <button class="btn btn-ghost" id="btnImport">导入备份</button>
+      <input type="file" id="fileImport" accept=".json,application/json" hidden>
+      <button class="btn btn-danger-ghost" id="btnClearSeed">清空示例数据</button>
+      <button class="btn btn-danger-ghost" id="btnClearAll">一键清空全部</button>
+    </div>
+  </div>
+</div>
+
+<!-- 通用输入弹窗 -->
+<div class="modal-wrap" id="modalName" hidden>
+  <div class="modal-backdrop" data-close-modal></div>
+  <div class="modal modal-sm" role="dialog" aria-modal="true" aria-label="填写内容">
+    <div class="modal-head">
+      <h3 id="nameTitle">填写</h3>
+      <button class="icon-btn" data-close-modal aria-label="关闭"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+    </div>
+    <form id="nameForm" class="modal-form">
+      <label class="field"><span class="field-label" id="nameLabel">内容</span><input id="nameInput" maxlength="80"></label>
+      <div class="name-actions">
+        <button class="btn btn-ghost" type="button" id="nameCancel">取消</button>
+        <button class="btn btn-primary" type="submit">确定</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 宾客 -->
+<div class="modal-wrap" id="modalGuest" hidden>
+  <div class="modal-backdrop" data-close-modal></div>
+  <div class="modal" role="dialog" aria-modal="true" aria-label="宾客信息">
+    <div class="modal-head">
+      <h3 id="guestModalTitle">添加宾客</h3>
+      <button class="icon-btn" data-close-modal aria-label="关闭"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+    </div>
+    <form id="guestForm" class="modal-form">
+      <div class="field-row">
+        <label class="field"><span class="field-label">姓名 / 称呼 <i>*</i></span><input id="gName" maxlength="20" required placeholder="如：张叔一家"></label>
+        <label class="field"><span class="field-label">人数</span><input id="gCount" type="number" min="1" max="99" value="1"></label>
+      </div>
+      <div class="field-row">
+        <label class="field"><span class="field-label">关系</span><input id="gRelation" maxlength="20" placeholder="如：男方亲友 / 同事"></label>
+        <label class="field"><span class="field-label">电话</span><input id="gPhone" type="tel" maxlength="20" placeholder="可选"></label>
+      </div>
+      <label class="field"><span class="field-label">备注</span><input id="gNote" maxlength="100" placeholder="忌口、座位安排等"></label>
+      <button class="btn btn-primary btn-block" type="submit">保存</button>
+    </form>
+  </div>
+</div>
+
+<!-- 商家联系人 -->
+<div class="modal-wrap" id="modalContact" hidden>
+  <div class="modal-backdrop" data-close-modal></div>
+  <div class="modal" role="dialog" aria-modal="true" aria-label="商家联系方式">
+    <div class="modal-head">
+      <h3 id="contactModalTitle">添加商家</h3>
+      <button class="icon-btn" data-close-modal aria-label="关闭"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+    </div>
+    <form id="contactForm" class="modal-form">
+      <label class="field"><span class="field-label">商家 / 角色 <i>*</i></span><input id="cName" maxlength="20" required placeholder="如：婚庆公司 / 摄影师"></label>
+      <label class="field"><span class="field-label">电话</span><input id="cPhone" type="tel" maxlength="20" placeholder="点击卡片可直接拨打"></label>
+      <label class="field"><span class="field-label">备注</span><input id="cNote" maxlength="100" placeholder="联系人、套餐、定金等"></label>
+      <button class="btn btn-primary btn-block" type="submit">保存</button>
+    </form>
+  </div>
+</div>
+
+<!-- 流程节点 -->
+<div class="modal-wrap" id="modalTimeline" hidden>
+  <div class="modal-backdrop" data-close-modal></div>
+  <div class="modal" role="dialog" aria-modal="true" aria-label="备婚节点">
+    <div class="modal-head">
+      <h3 id="tlModalTitle">新增节点</h3>
+      <button class="icon-btn" data-close-modal aria-label="关闭"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+    </div>
+    <form id="tlForm" class="modal-form">
+      <label class="field"><span class="field-label">节点名称 <i>*</i></span><input id="tlTitle" maxlength="30" required placeholder="如：拍婚纱照"></label>
+      <label class="field"><span class="field-label">计划日期</span><input id="tlDate" type="date"></label>
+      <label class="field"><span class="field-label">备注</span><input id="tlNote" maxlength="100" placeholder="可选"></label>
+      <button class="btn btn-primary btn-block" type="submit">保存</button>
+    </form>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<div class="confetti" id="confetti" aria-hidden="true"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
